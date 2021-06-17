@@ -1,0 +1,22 @@
+#!/bin/bash
+
+domain=$1
+if [ ! -d "gf" ]; then
+	mkdir gf
+fi
+#paten mathing using gf tomnomnom tool 
+if [ -f "url_feth/${domain}_url_extract.txt" ]; then
+	cat url_feth/${domain}_url_extract.txt | gf xss  | anew -q gf/${domain}_xss.txt
+	cat url_feth/${domain}_url_extract.txt | gf ssti  | anew -q gf/${domain}_ssti.txt
+	cat url_feth/${domain}_url_extract.txt | gf ssrf  | anew -q gf/${domain}_ssrf.txt
+	cat url_feth/${domain}_url_extract.txt | gf sqli  | anew -q gf/${domain}_sqli.txt
+	cat url_feth/${domain}_url_extract.txt | gf redirect  | anew -q gf/${domain}_redirect.txt && cat gf/${domain}_ssrf.txt | anew -q gf/${domain}_redirect.txt
+	cat url_feth/${domain}_url_extract.txt | gf rce  | anew -q gf/${domain}_rce.txt
+	cat url_feth/${domain}_url_extract.txt | gf potential  | cut -d ':' -f3-5 |anew -q gf/${domain}_potential.txt
+	cat url_feth/${domain}_url_extract.txt | unfurl -u format %s://%d%p | anew -q gf/${domain}_endpoints.txt
+	cat url_feth/${domain}_url_extract.txt | gf lfi  | anew -q gf/${domain}_lfi.txt
+	#notify-send "gf done  checkout "
+		else
+			echo "${domain}_url_extract.tx check domain name or somthing is wrong"
+fi
+

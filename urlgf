@@ -1,0 +1,21 @@
+#!/bin/bash
+
+domain=$1
+if [ ! -d "gf" ]; then
+	mkdir gf
+fi
+#paten mathing using gf tomnomnom tool 
+if [ -f "${domain}" ]; then
+	gf xss ${domain} | anew -q gf/${domain}_xss.txt
+	gf ssti ${domain} | anew -q gf/${domain}_ssti.txt
+	gf ssrf ${domain} | anew -q gf/${domain}_ssrf.txt
+	gf sqli ${domain} | anew -q gf/${domain}_sqli.txt
+	gf redirect ${domain} | anew -q gf/${domain}_redirect.txt && cat gf/${domain}_ssrf.txt | anew -q gf/${domain}_redirect.txt
+	gf rce ${domain} | anew -q gf/${domain}_rce.txt
+	gf potential ${domain} | cut -d ':' -f3-5 |anew -q gf/${domain}_potential.txt
+	cat ${domain} | unfurl -u format %s://%d%p | anew -q gf/${domain}_endpoints.txt
+	gf lfi ${domain} | anew -q gf/${domain}_lfi.txt
+	notify-send "gf done  checkout "
+		else
+			echo "${domain}_url_extract.tx check domain name or somthing is wrong"
+fi

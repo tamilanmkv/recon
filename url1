@@ -1,0 +1,52 @@
+#!/bin/bash
+
+domain=$1 #domain name 
+tools=~/tools #common tools path 
+DEBUG_STD="&>/dev/null" # for net output 
+
+if [ ! -d ".tmp" ] ; then
+    mkdir .tmp
+fi 
+if [[ ! -d "url_feth" ]];then 
+	mkdir url_feth;
+fi 
+##mining the paramerter extention 
+#if [ -f "${domain}_probed.txt" ]; then
+#        cat ${domain}_probed.txt | sed -r "s/https?:\/\///" | anew -q .tmp/${domain}_probed_nohttp.txt
+#    	interlace -tL ${domain}_probed.txt -threads 5 -c "python3 $tools/ParamSpider/paramspider.py -d _target_ -l high -q --exclude eot,jpg,jpeg,gif,css,tif,tiff,png,ttf,otf,woff,woff2,ico,pdf,svg,txt,js" 
+    #	for i in `cat ${domain}_probed.txt`;do
+#			  python3 $tools/ParamSpider/paramspider.py -d $i -l high -q --exclude eot,jpg,jpeg,gif,css,tif,tiff,png,ttf,otf,woff,woff2,ico,pdf,svg,txt,js
+#		  done
+#	cat output/*/*.txt | anew -q url_feth/${domain}_param.txt
+    	#sed '/^FUZZ/d' -i .tmp/${domain}_param_tmp.txt
+#        beem=(cat .tmp/${domain}_param_tmp.txt | wc -l);
+    	  # arjun -i .tmp/${domain}_param_tmp.txt -t 10 -oT url_feth/${domain}_param.txt 
+#    	   notify-send "params is done wayback urls is start" -t 100
+    #    else   
+ #           echo " [x] somethin is wrong "
+#fi 
+##feting url using waybackurl and gau and hakrawler 
+if [[ -f "http_https_probed.txt" ]]; then 
+#    eval cat http_https_probed.txt | waybackurls | anew -q .tmp/${domain}_urls.txt 
+#    eval cat http_https_probed.txt | gau | anew -q .tmp/${domain}_urls.txt 
+#    eval cat http_https_probed.txt | hakrawler -urls -plain -linkfinder -insecure -depth 2 | anew -q .tmp/${domain}_urls.txt 
+#    eval cat .tmp/${domain}_urls.txt | grep "${domain}" | grep "=" | eval qsreplace -a | egrep -iv "\.(eot|jpg|jpeg|gif|css|tif|tiff|png|ttf|otf|woff|woff2|ico|pdf|svg|txt|js)" | anew -q .tmp/${domain}_url_extract_tmp2.txt
+#    eval cat .tmp/${domain}_urls.txt | grep "${domain}" | egrep -i "\.(js)" | anew -q url_feth/${domain}_url_extract_js.txt
+    eval uddup -u .tmp/${domain}_url_extract_tmp2.txt -o .tmp/${domain}_url_extract_uddup.txt
+    eval cat .tmp/${domain}_url_extract_uddup.txt | anew -q url_feth/${domain}_url_extract.txt
+    eval cat  url_feth/${domain}_url_extract.txt url_feth/${domain}_param.txt | anew -q url_feth/all_urls.txt
+    
+notify-send "url collection is done" -t 100
+        else 
+            echo "[x] somethin is wrong"
+fi
+##javascript file detection 
+if [ -f "url_feth/${domain}_url_extract_js.txt" ]; then
+    cat url_feth/${domain}_url_extract_js.txt | grep -iE "\.js$" | anew -q url_feth/${domain}_jsfile_links.txt;
+    cat url_feth/${domain}_url_extract_js.txt | subjs | anew -q url_feth/${domain}_jsfile_links.txt;cat url_feth/${domain}_js_livelinks.txt | nuclei -silent -t ~/nuclei-templates/exposed-tokens/ -o url_feth/${domain}_js_secrets.txt
+    cat url_feth/${domain}_jsfile_links.txt | httpx -follow-host-redirects -H "${AGENT}" -silent -timeout 15 -status-code -no-color | cut -d ' ' -f1 | anew -q url_feth/${domain}_js_livelinks.txt
+    cat url_feth/${domain}_js_livelinks.txt | python3 $tools/getjswords.py | anew -q url_feth/${domain}_js_Wordlist.txt
+    notify-send "Js parses and spiders done completed "
+        else
+            echo "ayyo mudiyala check pa"
+fi

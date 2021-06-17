@@ -1,0 +1,11 @@
+#!/bin/bash 
+if [ ! -d ".tmp" ];then 
+	mkdir .tmp
+fi
+if [ -f $1 ];
+then
+	#cat $1 | httprobe| anew -q http_https_probed.txt 
+	cat http_https_probed.txt | sed 's/http[s]*:\/\///g' | anew -q live_domain_probed.txt
+	cat http_https_probed.txt | sed -r "s/https?:\/\///" | anew -q probed_no_http.txt
+	notify-sent "probe is done!";
+fi

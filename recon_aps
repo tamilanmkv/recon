@@ -1,0 +1,39 @@
+#!/bin/bash
+
+source ~/.bash_profile
+if [ ! -d "recon" ]; then
+	mkdir url_recon
+fi
+if [[ -z $1 ]];
+then
+ echo "Please provide the root domain file name!"
+exit
+fi
+rm -f url_recon/allfiles.txt url_recon/uniq_files.txt url_recon/wayback_only_html.txt url_recon/wayback_js_files.txt url_recon/wayback_httprobe_file.txt url_recon/wayback_json_files.txt url_recon/important_http_urls.txt url_recon/aws_s3_files.txt
+echo "Currently waybackurls extract is in progress!!"
+for i in $(cat $1)
+do
+  waybackurls $i >> allfiles.txt
+  gau $i >> url_recon/allfiles.txt
+done
+echo "Waybackurls extraction is complete!!"
+sort -ru url_recon/allfiles.txt >> url_recon/uniq_files.txt
+echo "Uniq file also created. please check [uniq_files.txt]"
+echo "Now, we need to extract only html files from the list"
+grep -iv -E -- ".js|.png|.jpg|.gif|.ico|.img|.css" url_recon/uniq_files.txt >> url_recon/wayback_only_html.txt
+echo "We have extracted all html files.Please check [wayback_only_html.txt]"
+echo "Next is to extracct js files from the list"
+cat url_recon/uniq_files.txt | grep "\.js" | uniq | sort >> url_recon/wayback_js_files.txt
+cat url_recon/uniq_files.txt | grep "\.json" | uniq | sort >> url_recon/wayback_json_files.txt
+echo "Js files have been successfully extracted **************[wayback_js_files.txt]**************"
+echo "Json files have been successfully extracted **************[wayback_json_files.txt]**************"
+echo "Now extracting important urls from **************[wayback_only_html.txt]**************"
+grep --color=always -i -E -- "admin|auth|api|jenkins|corp|dev|stag|stg|prod|sandbox|swagger|aws|azure|uat|test|vpn|cms" url_recon/wayback_only_html.txt >> url_recon/important_http_urls.txt
+echo "Please check file **************[important_http_urls.txt]*************"
+grep --color=always -i -E -- "aws|s3" url_recon/uniq_files.txt >> url_recon/aws_s3_files.txt
+echo "Please check file **************aws_s3_files.txt]*************"
+echo "Process is complete"
+echo "Now start takin screensots selectively"
+echo "The command:"
+echo " — — — — — — — "
+#cat url_recon/wayback_only_html.txt | aquatone -threads 20 -chrome-path /usr/local/chromium

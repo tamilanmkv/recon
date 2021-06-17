@@ -1,0 +1,16 @@
+first open subdomain.sh
+domain scan domain
+cors scan cors.sh
+crlf scan crlf.sh
+portscan portscan.sh
+sudomain takeover subtakeover.sh
+url scan url_collect.sh
+gf scan gf_url.sh
+sql scan sql.sh
+ssti ssti.sh
+lfi lfi.sh
+broken link broken_link_hijack.sh
+xss scan xss.sh
+fuzzing common fuzzy.sh
+
+
