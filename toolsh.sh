@@ -26,6 +26,7 @@ GO111MODULE=on go get -v github.com/projectdiscovery/httpx/cmd/httpx
 GO111MODULE=on go get -v github.com/projectdiscovery/notify/cmd/notify
 go get github.com/cgboal/sonarsearch/crobat
 go get -u github.com/tomnomnom/assetfinder
+GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
 go get github.com/hakluke/hakrawler
 GO111MODULE=on go get -u -v github.com/lc/subjs
 go get -u github.com/tomnomnom/qsreplace
