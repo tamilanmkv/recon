@@ -17,7 +17,7 @@ go get -u github.com/KathanP19/Gxss
 go get -u github.com/tomnomnom/gf
 go get -u github.com/tomnomnom/httprobe
 go get -u github.com/tomnomnom/anew
-go get -u github.com/tomnomnom/waybackurl
+go get -u github.com/tomnomnom/waybackurls
 GO111MODULE=on go get -v github.com/hahwul/dalfox/v2
 GO111MODULE=on go get -u -v github.com/lc/gau
 go get -u github.com/jaeles-project/gospider
